@@ -36,12 +36,11 @@ public class MainActivity extends AppCompatActivity {
     };
 
     public String filename;
-    public String path_to_file;
     public ImageView camera;
     public Button btn;
     public TextView tv;
     public Bitmap imageBitmap;
-    public Object image;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,7 +86,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Bundle extras = data.getExtras();
-       imageBitmap = (Bitmap) extras.get("data");
+        imageBitmap = (Bitmap) extras.get("data");
+        imageBitmap = Bitmap.createScaledBitmap(imageBitmap, 128, 128, false);
     }
 
     public static void verifyStoragePermissions(Activity activity) {
@@ -108,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
         String pass = "12345";
 
         filename = "AUG_0_11.jpeg";
-        path_to_file = "/storage/emulated/0/Download/AUG_0_11.jpeg";
 
         FTPClient ftpClient = new FTPClient();
         try {
@@ -118,8 +117,6 @@ public class MainActivity extends AppCompatActivity {
             ftpClient.enterLocalPassiveMode();
 
             ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-
-            File firstLocalFile = new File(path_to_file);
 
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             imageBitmap.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
