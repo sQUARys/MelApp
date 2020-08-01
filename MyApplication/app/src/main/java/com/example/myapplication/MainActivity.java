@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -118,6 +119,10 @@ public class MainActivity extends AppCompatActivity {
 
             ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
 
+            if(imageBitmap == null){
+                System.out.println("Сначала сфотографируйте потом отправляйте");
+                return;
+            }
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             imageBitmap.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
             byte[] bitmapdata = bos.toByteArray();
