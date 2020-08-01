@@ -21,10 +21,11 @@ import java.io.IOException;
 import java.io.InputStream;
 
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment{
 
     public Button btn;
     public TextView tv;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -41,7 +42,13 @@ public class MainFragment extends Fragment {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                secondTry();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        secondTry();
+                    }
+                }).start();
+
             }
         });
     }
@@ -56,7 +63,7 @@ public class MainFragment extends Fragment {
         FTPClient ftpClient = new FTPClient();
         try {
 
-            ftpClient.connect("127.0.0.1", 21);
+            ftpClient.connect("192.168.1.104");
             ftpClient.login(user, pass);
             ftpClient.enterLocalPassiveMode();
 
@@ -66,14 +73,12 @@ public class MainFragment extends Fragment {
 
 //            InputStream inputStream = new FileInputStream(firstLocalFile);
 
-            tv.setText("GGGLGLGL");
 //            boolean done = ftpClient.storeFile(filename, inputStream);
 //            inputStream.close();
 //            if (done) {
 //                System.out.println("The first file is uploaded successfully.");
 //            }
 //            inputStream.close();
-
         } catch (IOException ex) {
             System.out.println("Error: " + ex.getMessage());
             ex.printStackTrace();
@@ -88,33 +93,4 @@ public class MainFragment extends Fragment {
             }
         }
     }
-//    public void goforIt(){
-//
-//        FTPClient con;
-//        filename = "AUG_0_307.jpeg";
-//        path_to_file = "/home/roma/Desktop/CNN/AUG_0_307.jpeg";
-//
-//        try
-//        {
-//            con = new FTPClient();
-//            con.connect("127.0.0.1");
-//
-//            if (con.login("user", "12345"))
-//            {
-//                con.enterLocalPassiveMode(); // important!
-//                con.setFileType(FTP.BINARY_FILE_TYPE);
-//
-//                FileInputStream in = new FileInputStream(new File("/home/roma/Desktop"));
-//                boolean result = con.storeFile(filename, in);
-//                in.close();
-//                if (result) tv.setText("DOne");
-//                con.logout();
-//                con.disconnect();
-//            }
-//        }
-//        catch (Exception e)
-//        {
-//            e.printStackTrace();
-//        }
-//    }
 }
