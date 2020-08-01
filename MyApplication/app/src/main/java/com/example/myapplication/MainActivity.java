@@ -20,6 +20,8 @@ import android.widget.TextView;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -38,12 +40,15 @@ public class MainActivity extends AppCompatActivity {
     public ImageView camera;
     public Button btn;
     public TextView tv;
-
+    public Bitmap imageBitmap;
+    public Object image;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         verifyStoragePermissions(this);
+
+
 //        Fragment selected = new MainFragment();
 //        getSupportFragmentManager().beginTransaction().replace(R.id.container,
 //                selected).commit();
@@ -82,8 +87,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Bundle extras = data.getExtras();
-        Bitmap imageBitmap = (Bitmap) extras.get("data");
-        camera.setImageBitmap(imageBitmap);
+       imageBitmap = (Bitmap) extras.get("data");
     }
 
     public static void verifyStoragePermissions(Activity activity) {
@@ -117,14 +121,15 @@ public class MainActivity extends AppCompatActivity {
 
             File firstLocalFile = new File(path_to_file);
 
-            InputStream inputStream = new FileInputStream(firstLocalFile);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            imageBitmap.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
+            byte[] bitmapdata = bos.toByteArray();
+            ByteArrayInputStream bs = new ByteArrayInputStream(bitmapdata);
 
-            boolean done = ftpClient.storeFile(filename, inputStream);
-            inputStream.close();
+            boolean done = ftpClient.storeFile(filename, bs);
             if (done) {
                 System.out.println("The first file is uploaded successfully.");
             }
-            inputStream.close();
 
         } catch (IOException ex) {
             System.out.println("Error: " + ex.getMessage());
