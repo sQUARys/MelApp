@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
         Bundle extras = data.getExtras();
         imageBitmap = (Bitmap) extras.get("data");
         imageBitmap = Bitmap.createScaledBitmap(imageBitmap, 128, 128, false);
+        camera.setImageBitmap(imageBitmap);
     }
 
     public static void verifyStoragePermissions(Activity activity) {
