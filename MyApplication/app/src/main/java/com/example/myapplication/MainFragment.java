@@ -25,6 +25,8 @@ public class MainFragment extends Fragment{
 
     public Button btn;
     public TextView tv;
+    public String filename;
+    public String path_to_file;
 
     @Nullable
     @Override
@@ -56,9 +58,9 @@ public class MainFragment extends Fragment{
     public void secondTry(){
         String user = "user";
         String pass = "12345";
-//
-//        filename = "AUG_0_307.jpeg";
-//        path_to_file = "/home/roma/Desktop/CNN/AUG_0_307.jpeg";
+
+        filename = "AUG_0_11.jpeg";
+        path_to_file = "/storage/emulated/0/Download/AUG_0_11.jpeg";
 
         FTPClient ftpClient = new FTPClient();
         try {
@@ -69,28 +71,33 @@ public class MainFragment extends Fragment{
 
             ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
 
-//            File firstLocalFile = new File(path_to_file);
+            File firstLocalFile = new File(path_to_file);
 
-//            InputStream inputStream = new FileInputStream(firstLocalFile);
+            InputStream inputStream = new FileInputStream(firstLocalFile);
 
-//            boolean done = ftpClient.storeFile(filename, inputStream);
-//            inputStream.close();
-//            if (done) {
-//                System.out.println("The first file is uploaded successfully.");
-//            }
-//            inputStream.close();
+            boolean done = ftpClient.storeFile(filename, inputStream);
+            inputStream.close();
+            if (done) {
+                System.out.println("The first file is uploaded successfully.");
+            }
+            inputStream.close();
+
         } catch (IOException ex) {
             System.out.println("Error: " + ex.getMessage());
             ex.printStackTrace();
+
         } finally {
+
             try {
                 if (ftpClient.isConnected()) {
                     ftpClient.logout();
                     ftpClient.disconnect();
                 }
+
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
+
         }
     }
 }
