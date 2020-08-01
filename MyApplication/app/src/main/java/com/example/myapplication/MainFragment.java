@@ -55,6 +55,7 @@ public class MainFragment extends Fragment{
         });
     }
 
+
     public void send_data_to_server(){
         String user = "user";
         String pass = "12345";
@@ -97,7 +98,7 @@ public class MainFragment extends Fragment{
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-
         }
     }
+
 }
