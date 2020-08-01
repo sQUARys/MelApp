@@ -47,7 +47,7 @@ public class MainFragment extends Fragment{
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        secondTry();
+                        send_data_to_server();
                     }
                 }).start();
 
@@ -55,7 +55,7 @@ public class MainFragment extends Fragment{
         });
     }
 
-    public void secondTry(){
+    public void send_data_to_server(){
         String user = "user";
         String pass = "12345";
 
