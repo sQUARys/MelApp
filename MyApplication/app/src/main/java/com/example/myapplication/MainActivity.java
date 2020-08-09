@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -20,13 +21,16 @@ import android.widget.Toast;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,18 +45,15 @@ public class MainActivity extends AppCompatActivity {
     public Button btn;
     public TextView tv;
     public Bitmap imageBitmap;
+    public String accuracy_server_file = "accuracy.txt";
+    public boolean status;
+    public FileOutputStream fos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         verifyStoragePermissions(this);
-
-
-//        Fragment selected = new MainFragment();
-//        getSupportFragmentManager().beginTransaction().replace(R.id.container,
-//                selected).commit();
-
         camera = findViewById(R.id.imageview);
         btn = findViewById(R.id.btn);
         tv =  findViewById(R.id.tv);
@@ -109,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         String user = "user";
         String pass = "12345";
 
-        filename = "AUG_0_11.jpeg";
+        filename = "picture.jpeg";
 
         FTPClient ftpClient = new FTPClient();
         try {
@@ -124,16 +125,26 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("Сначала сфотографируйте потом отправляйте");
                 return;
             }
+
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             imageBitmap.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
+
             byte[] bitmapdata = bos.toByteArray();
             ByteArrayInputStream bs = new ByteArrayInputStream(bitmapdata);
 
             boolean done = ftpClient.storeFile(filename, bs);
+
             if (done) {
-                System.out.println("The first file is uploaded successfully.");
+                System.out.println("The first file is uploaded successfully.");;
+                fos = openFileOutput(accuracy_server_file, Context.MODE_PRIVATE);
+                
+                status = ftpClient.retrieveFile("/" + accuracy_server_file, fos);
+                if(status){
+                    System.out.println("The first file is downloaded successfully.");
+                }
             }
 
+            
         } catch (IOException ex) {
             System.out.println("Error: " + ex.getMessage());
             ex.printStackTrace();
@@ -142,7 +153,11 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 if (ftpClient.isConnected()) {
+
                     ftpClient.logout();
+                    if (fos != null) {
+                        fos.close();
+                    }
                     ftpClient.disconnect();
                 }
 
