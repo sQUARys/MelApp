@@ -14,8 +14,13 @@
         android:text="Server"></Button>
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="HERE WE WILL CHECK THE ACCURACY: "
+        android:textAlignment="center"
+        android:textColor="#000"
+        android:textSize="15dp"
+        android:layout_alignParentBottom="true"
         android:id="@+id/tv"></TextView>
     <Button
         android:id="@+id/takepicture"

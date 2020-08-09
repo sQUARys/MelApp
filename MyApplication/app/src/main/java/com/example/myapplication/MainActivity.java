@@ -28,6 +28,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -47,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
     public Bitmap imageBitmap;
     public String accuracy_server_file = "accuracy.txt";
     public boolean status;
-    public FileOutputStream fos;
+    ByteArrayOutputStream array_for_accuracy;
+    ByteArrayInputStream array_for_image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         camera = findViewById(R.id.imageview);
         btn = findViewById(R.id.btn);
         tv =  findViewById(R.id.tv);
+        array_for_accuracy = new ByteArrayOutputStream();
     }
 
     @Override
@@ -129,18 +132,23 @@ public class MainActivity extends AppCompatActivity {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             imageBitmap.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
 
-            byte[] bitmapdata = bos.toByteArray();
-            ByteArrayInputStream bs = new ByteArrayInputStream(bitmapdata);
+            byte[] bytes_of_image = bos.toByteArray();
+            array_for_image = new ByteArrayInputStream(bytes_of_image);
 
-            boolean done = ftpClient.storeFile(filename, bs);
+            boolean done = ftpClient.storeFile(filename, array_for_image);
 
             if (done) {
+
                 System.out.println("The first file is uploaded successfully.");;
-                fos = openFileOutput(accuracy_server_file, Context.MODE_PRIVATE);
-                
-                status = ftpClient.retrieveFile("/" + accuracy_server_file, fos);
+
+                status = ftpClient.retrieveFile("/" + accuracy_server_file, array_for_accuracy);
+
                 if(status){
+
                     System.out.println("The first file is downloaded successfully.");
+
+                    System.out.println(array_for_accuracy.toString());
+                    tv.setText("HERE WE WILL CHECK THE ACCURACY: " + array_for_accuracy.toString());
                 }
             }
 
@@ -150,14 +158,10 @@ public class MainActivity extends AppCompatActivity {
             ex.printStackTrace();
 
         } finally {
-
             try {
                 if (ftpClient.isConnected()) {
 
                     ftpClient.logout();
-                    if (fos != null) {
-                        fos.close();
-                    }
                     ftpClient.disconnect();
                 }
 
