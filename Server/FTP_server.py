@@ -44,7 +44,7 @@ class MyHandler(FTPHandler):
 if __name__ == "__main__":
 
     authorizer = DummyAuthorizer()
-    authorizer.add_user("user", "12345", "/home/roma/Desktop/1", perm="elradfmw")
+    authorizer.add_user("user", "12345", "/home/roma/Desktop/Server", perm="elradfmw")
     authorizer.add_anonymous("/home")
 
     handler = MyHandler
