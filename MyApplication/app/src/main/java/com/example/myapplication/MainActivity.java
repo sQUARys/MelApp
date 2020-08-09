@@ -149,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
 
                     System.out.println(array_for_accuracy.toString());
                     tv.setText("HERE WE WILL CHECK THE ACCURACY: " + array_for_accuracy.toString());
+                    array_for_accuracy.reset();
                 }
             }
 
