@@ -12,7 +12,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 
 
 model = load_model('/home/roma/Desktop/CNN/models/keras_model_with_new_dataset_15.h5')
-
+accuracy_file = "/home/roma/Desktop/Server/accuracy.txt"
 
 def model_predict(image):
     im = Image.open(image)
@@ -30,6 +30,13 @@ class MyHandler(FTPHandler):
     def on_file_received(self, file):
         print("IT IS RECEIVED.")
         print("SO PROBABLY PREDICTION IS -" , model_predict(file))
+        if accuracy_file:
+            with open(accuracy_file, "r+") as accuracy_read_file: 
+                accuracy_read_file.seek(0)
+
+        with open(accuracy_file, "w+") as accuracy_write_file: 
+                 accuracy_write_file.write(model_predict(file))
+                 accuracy_write_file.close()
         pass
 
 
@@ -43,6 +50,6 @@ if __name__ == "__main__":
     handler = MyHandler
     handler.authorizer = authorizer
 
-    server = FTPServer(("127.0.0.1", 21), handler)
+    server = FTPServer(("192.168.1.104", 21), handler)
     server.serve_forever()
 
