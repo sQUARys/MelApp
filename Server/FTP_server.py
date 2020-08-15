@@ -18,12 +18,13 @@ from tensorflow import keras
 
 model = load_model('/home/roma/Desktop/CNN/models/keras_model_with_new_dataset_15.h5')
 accuracy_file = "/home/roma/Desktop/Server/accuracy.txt"
-f_image = ""
+file_for_accuracy = "/home/roma/Desktop/Server/picture.jpeg"
+file_for_im_diff = "/home/roma/Desktop/Server/picture.jpeg"
+
+imageA = cv2.imread("first.jpg")
+imageB = cv2.imread("second.jpg")
 
 def image_difference():
-
-    imageA = cv2.imread("first.jpg")
-    imageB = cv2.imread("second.jpg")
 
     grayA = cv2.cvtColor(imageA, cv2.COLOR_BGR2GRAY)
     grayB = cv2.cvtColor(imageB, cv2.COLOR_BGR2GRAY)
@@ -39,10 +40,7 @@ def image_difference():
 	    (x, y, w, h) = cv2.boundingRect(c)
 	    cv2.rectangle(imageA, (x, y), (x + w, y + h), (0, 0, 255), 2)
 	    cv2.rectangle(imageB, (x, y), (x + w, y + h), (0, 0, 255), 2)
-
-    cv2.imshow("Original", imageA)
-    cv2.imshow("Modified", imageB)
-    cv2.waitKey(0)
+    
 
 
 def model_predict(image):
@@ -59,17 +57,22 @@ class MyHandler(FTPHandler):
         pass
 
     def on_file_received(self, file):
-        print("IT IS RECEIVED.")
-        print("SO PROBABLY PREDICTION IS -" , model_predict(file))
-        if accuracy_file:
-            with open(accuracy_file, "r+") as accuracy_read_file: 
-                accuracy_read_file.seek(0)
+        if file == file_for_accuracy:
+            print("#### IT IS RECEIVED ####")
+            print("SO PROBABLY PREDICTION IS -" , model_predict(file))
+            if accuracy_file:
+                with open(accuracy_file, "r+") as accuracy_read_file: 
+                    accuracy_read_file.seek(0)
 
-        with open(accuracy_file, "w+") as accuracy_write_file: 
+            with open(accuracy_file, "w+") as accuracy_write_file: 
                  accuracy_write_file.write(model_predict(file))
                  accuracy_write_file.close()
-        pass
+            pass
 
+        if file == file_for_im_diff:
+            image_difference()
+            cv2.imshow("Modified", imageB)
+            cv2.waitKey(1000)
 
     
 if __name__ == "__main__":
@@ -82,5 +85,4 @@ if __name__ == "__main__":
     handler.authorizer = authorizer
 
     server = FTPServer(("192.168.1.104", 21), handler)
-    image_difference()
     server.serve_forever()
