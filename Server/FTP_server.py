@@ -1,6 +1,7 @@
 import argparse
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from io import BytesIO
+import os
 
 from cv2 import cv2
 import imutils
@@ -14,18 +15,20 @@ from pyftpdlib.handlers import FTPHandler
 from pyftpdlib.servers import FTPServer
 from skimage.measure import compare_ssim
 from tensorflow import keras
-
+import time
 
 model = load_model('/home/roma/Desktop/CNN/models/keras_model_with_new_dataset_15.h5')
 accuracy_file = "/home/roma/Desktop/MelApp/Server/accuracy.txt"
 file_for_accuracy = "/home/roma/Desktop/MelApp/Server/picture.jpeg"
 file_for_im_diff = "/home/roma/Desktop/MelApp/Server/image_diff.jpeg"
 
-imageA = cv2.imread("first.jpg")
-imageB = cv2.imread("second.jpg")
+images_differences = ["original_image_diff.jpeg" , "image_diff.jpeg"]
+
+imageA = cv2.imread(images_differences[0])
+imageB = cv2.imread(images_differences[1])
 
 def image_difference():
-
+    
     grayA = cv2.cvtColor(imageA, cv2.COLOR_BGR2GRAY)
     grayB = cv2.cvtColor(imageB, cv2.COLOR_BGR2GRAY)
 
@@ -51,7 +54,9 @@ def model_predict(image):
     predictions_single_string = np.array_str(predictions_single)
     return predictions_single_string
 
+
 class MyHandler(FTPHandler):
+
     def on_login(self, username):
         print("LOGIN...")
         pass
@@ -70,9 +75,18 @@ class MyHandler(FTPHandler):
             pass
 
         if file == file_for_im_diff:
-            image_difference()
-            cv2.imshow("Modified", imageB)
-            cv2.waitKey(1000)
+            if os.path.isfile(images_differences[0]) == False:
+                print("FIRST FILE FOR IMD IS UPLOADED, PLEASE SEND A SECOND")
+                os.rename(images_differences[1] , images_differences[0])
+                
+            if os.path.isfile(images_differences[0]) == True and os.path.isfile(images_differences[1]) == True:
+                print("Second file is Uploaded")
+                time.sleep(5)
+                image_difference()
+                cv2.imshow("Modified", imageB)
+                cv2.waitKey(1000)
+                os.remove(images_differences[0])
+                os.remove(images_differences[1])
 
     
 if __name__ == "__main__":
