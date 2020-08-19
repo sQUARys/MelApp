@@ -17,9 +17,9 @@ from tensorflow import keras
 
 
 model = load_model('/home/roma/Desktop/CNN/models/keras_model_with_new_dataset_15.h5')
-accuracy_file = "/home/roma/Desktop/Server/accuracy.txt"
-file_for_accuracy = "/home/roma/Desktop/Server/picture.jpeg"
-file_for_im_diff = "/home/roma/Desktop/Server/picture.jpeg"
+accuracy_file = "/home/roma/Desktop/MelApp/Server/accuracy.txt"
+file_for_accuracy = "/home/roma/Desktop/MelApp/Server/picture.jpeg"
+file_for_im_diff = "/home/roma/Desktop/MelApp/Server/image_diff.jpeg"
 
 imageA = cv2.imread("first.jpg")
 imageB = cv2.imread("second.jpg")
@@ -78,7 +78,7 @@ class MyHandler(FTPHandler):
 if __name__ == "__main__":
 
     authorizer = DummyAuthorizer()
-    authorizer.add_user("user", "12345", "/home/roma/Desktop/Server", perm="elradfmw")
+    authorizer.add_user("user", "12345", "/home/roma/Desktop/MelApp/Server", perm="elradfmw")
     authorizer.add_anonymous("/home")
 
     handler = MyHandler
